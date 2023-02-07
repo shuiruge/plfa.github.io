@@ -79,6 +79,8 @@ Write out `7` in longhand.
 
 ```agda
 -- Your code goes here
+seven : ℕ
+seven = suc (suc (suc (suc (suc (suc (suc zero))))))
 ```
 
 You will need to give both a type signature and definition for the
@@ -431,6 +433,20 @@ Compute `3 + 4`, writing out your reasoning as a chain of equations, using the e
 
 ```agda
 -- Your code goes here
+_ : 3 + 4 ≡ 7
+_ = begin
+    3 + 4
+  ≡⟨⟩
+    suc (2 + 4)
+  ≡⟨⟩
+    suc (suc (1 + 4))
+  ≡⟨⟩
+    suc (suc (suc (0 + 4)))
+  ≡⟨⟩
+    suc (suc (suc 4))
+  ≡⟨⟩
+    7
+  ∎ 
 ```
 
 
@@ -492,7 +508,17 @@ Compute `3 * 4`, writing out your reasoning as a chain of equations, using the e
 (You do not need to step through the evaluation of `+`.)
 
 ```agda
--- Your code goes here
+_ = begin
+    3 * 4
+  ≡⟨⟩
+    4 + (2 * 4)
+  ≡⟨⟩
+    4 + (4 + (1 * 4))
+  ≡⟨⟩
+    4 + (4 + 4)
+  ≡⟨⟩
+    12
+  ∎
 ```
 
 
@@ -503,12 +529,31 @@ Define exponentiation, which is given by the following equations:
     m ^ 0        =  1
     m ^ (1 + n)  =  m * (m ^ n)
 
-Check that `3 ^ 4` is `81`.
+Check that `3 ^ 4`
 
 ```agda
 -- Your code goes here
-```
 
+-- Define `_^_` first.
+_^_ : ℕ → ℕ → ℕ
+m ^ zero = suc zero
+m ^ (suc n) = m * (m ^ n)
+
+-- Check `3 ^ 4`.
+_ = begin
+    3 ^ 4
+  ≡⟨⟩
+    3 * (3 ^ 3)
+  ≡⟨⟩
+    3 * (3 * (3 ^ 2))
+  ≡⟨⟩
+    3 * (3 * (3 * (3 ^ 1)))
+  ≡⟨⟩
+    3 * (3 * (3 * 3))
+  ≡⟨⟩
+    81
+  ∎
+```
 
 
 ## Monus
@@ -590,6 +635,29 @@ Compute `5 ∸ 3` and `3 ∸ 5`, writing out your reasoning as a chain of equati
 
 ```agda
 -- Your code goes here
+_ = begin
+    5 ∸ 3
+  ≡⟨⟩
+    4 ∸ 2
+  ≡⟨⟩
+    3 ∸ 1
+  ≡⟨⟩
+    2 ∸ 0
+  ≡⟨⟩
+    2
+  ∎
+
+_ = begin
+    3 ∸ 5
+  ≡⟨⟩
+    2 ∸ 4
+  ≡⟨⟩
+    1 ∸ 3
+  ≡⟨⟩
+    0 ∸ 2
+  ≡⟨⟩
+    0
+  ∎
 ```
 
 
@@ -937,6 +1005,62 @@ Confirm that these both give the correct answer for zero through four.
 
 ```agda
 -- Your code goes here
+
+-- inc function --
+
+inc : Bin → Bin
+inc ⟨⟩ = ⟨⟩ I
+inc (b O) = b I
+inc (b I) = (inc b) O
+
+_ : inc (⟨⟩ I O I I) ≡ ⟨⟩ I I O O
+_ = refl
+
+_ : inc (⟨⟩ O) ≡ ⟨⟩ I
+_ = refl
+
+_ : inc (⟨⟩ I) ≡ ⟨⟩ I O
+_ = refl
+
+-- to funciton --
+
+to : ℕ → Bin
+to zero = ⟨⟩ O
+to (suc m) = inc (to m)
+
+_ : to 2 ≡ ⟨⟩ I O
+_ = refl
+
+_ : to 11 ≡ (⟨⟩ I O I I)
+_ = refl
+
+-- from funciton --
+
+from : Bin → ℕ
+from ⟨⟩ = zero
+from (b O) = 2 * (from b)
+from (b I) = 2 * (from b) + 1
+{-
+  But this will fail:
+
+    from (inc b) = suc (from b)
+
+  For example:
+
+    _ : from (⟨⟩ I O) ≡ 2
+    _ = begin
+        from (⟨⟩ I O)
+      ≡⟨⟩
+        ?
+     
+   As you see, the problem is that it's hard to find the `b` such that
+   `inc b ≡ ⟨⟩ I O`. This is different from the `suc` function for `ℕ`,
+   for which `suc` is the definition of elements in `ℕ` so that for
+   each `m : ℕ`, we can always find an unique `n` such that `suc n ≡ m`.
+-}
+
+_ : from (⟨⟩ I O I I) ≡ 11
+_ = refl
 ```
 
 
